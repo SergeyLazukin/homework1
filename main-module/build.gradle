@@ -5,6 +5,8 @@ dependencies {
     implementation "com.google.guava:guava:$guavaVersion"
     // JSON parser
     implementation "com.google.code.gson:gson:$gsonVersion"
+    // JsonPath
+    implementation "com.jayway.jsonpath:json-path:$jsonPathVersion"
     // HTTP client
     implementation "org.apache.httpcomponents:httpclient:$httpClientVersion"
     // Logging

@@ -7,6 +7,7 @@ ext {
     logbackVersion = "1.2.3"
     junitVersion = "5.7.0"
     mockitoVersion = "3.5.11"
+    jsonPathVersion = "2.4.0"
 }
 
 allprojects { ->
