@@ -52,7 +52,7 @@ public class WikipediaClient {
         } catch (IOException ex) {
             logger.error(ex.getMessage());
             throw new RuntimeException(ex);
-        };
+        }
         return text;
     }
 
