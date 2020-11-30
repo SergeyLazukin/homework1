@@ -47,7 +47,8 @@ public class WikipediaClient {
                 String json = reader.readLine();
                 JSONArray jsonArray = JsonPath.parse(json).read( "$.query.pages.*.extract");
                 text = jsonArray.get(0).toString();
-                text = text.replaceAll("\\\\n", "\n").toLowerCase();
+//                text = text.replaceAll("\\\\n", "\n").toLowerCase();
+                text = text.replaceAll("\\\\n", "\n");
             }
         } catch (IOException ex) {
             logger.error(ex.getMessage());
