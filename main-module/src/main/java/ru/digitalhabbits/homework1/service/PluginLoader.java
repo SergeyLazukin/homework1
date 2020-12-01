@@ -53,7 +53,7 @@ public class PluginLoader {
                 resources[i] = new File(pathPlugins + namePlugins.get(i)).toURI().toURL();
                 URLClassLoader childClassloader = new URLClassLoader(new URL[]{resources[i]}, PluginLoader.class.getClassLoader());
                 Class<? extends PluginInterface> clazz = (Class<? extends PluginInterface>)
-                        Class.forName(PACKAGE_TO_SCAN + nameClassPlugins.get(i), true, childClassloader);
+                        Class.forName(nameClassPlugins.get(i), true, childClassloader);
                 plugins.add(clazz);
             }
         } catch (ClassNotFoundException | MalformedURLException e) {
@@ -73,9 +73,7 @@ public class PluginLoader {
                 while (enumeration.hasMoreElements()) {
                     String file = enumeration.nextElement().getName().replaceAll("/", "\\.");
                     if (file.endsWith(".class") && file.startsWith(PACKAGE_TO_SCAN)) {
-                        String[] array = file.split("\\.");
-                        String className = array[array.length - 2];
-                        result.add(className);
+                        result.add(file.substring(0, file.length() - 6));
                     }
                 }
             }
