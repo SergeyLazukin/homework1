@@ -30,7 +30,8 @@ public class PluginLoader {
     @Nonnull
     public List<Class<? extends PluginInterface>> loadPlugins(@Nonnull String pluginDirName) {
         // TODO: NotImplemented
-        String pathPlugins = System.getProperty("user.dir") + "\\" + pluginDirName + "\\";
+//        String pathPlugins = System.getProperty("user.dir") + "\\" + pluginDirName + "\\";
+        String pathPlugins = System.getProperty("user.dir") + "/" + pluginDirName + "/";
 
         List<Class<? extends PluginInterface>> plugins = new ArrayList<>();
 
