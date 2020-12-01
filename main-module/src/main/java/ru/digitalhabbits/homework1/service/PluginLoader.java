@@ -6,43 +6,83 @@ import ru.digitalhabbits.homework1.plugin.PluginInterface;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class PluginLoader {
-    private static final Logger logger = getLogger(PluginLoader.class);
+    private static final Logger LOGGER = getLogger(PluginLoader.class);
 
     private static final String PLUGIN_EXT = "jar";
-    private static final String PACKAGE_TO_SCAN = "ru.digitalhabbits.homework1.plugin";
+    private static final String PACKAGE_TO_SCAN = "ru.digitalhabbits.homework1.plugin.";
 
     @Nonnull
     public List<Class<? extends PluginInterface>> loadPlugins(@Nonnull String pluginDirName) {
         // TODO: NotImplemented
-        String path = System.getProperty("user.dir") + "\\" + pluginDirName + "\\";
+        String pathPlugins = System.getProperty("user.dir") + "\\" + pluginDirName + "\\";
 
         List<Class<? extends PluginInterface>> plugins = new ArrayList<>();
 
-        List<String> namePlugins = Arrays.asList("counter-plugin", "frequency-dictionary-plugin");
-        List<String> nameClassPlugins = Arrays.asList("CounterPlugin", "FrequencyDictionaryPlugin");
+        List<String> namePlugins;
+        List<Path> pathList = new ArrayList<>();
+        List<String> nameClassPlugins;
+        try {
+            pathList = Files.list(new File(pathPlugins).toPath()).collect(Collectors.toList());
+        } catch (IOException e) {
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            e.printStackTrace();
+        }
+
+        namePlugins = pathList.stream().map(path -> path.toFile().getName()).collect(Collectors.toList());
+        nameClassPlugins = takeClassnameFromJar(pathList);
 
         URL[] resources = new URL[namePlugins.size()];
         try {
             for (int i = 0; i < resources.length; i++) {
-                resources[i] = new File(path + namePlugins.get(i) + "." + PLUGIN_EXT).toURI().toURL();
+                resources[i] = new File(pathPlugins + namePlugins.get(i)).toURI().toURL();
                 URLClassLoader childClassloader = new URLClassLoader(new URL[]{resources[i]}, PluginLoader.class.getClassLoader());
                 Class<? extends PluginInterface> clazz = (Class<? extends PluginInterface>)
-                        Class.forName(PACKAGE_TO_SCAN + "." + nameClassPlugins.get(i), true, childClassloader);
+                        Class.forName(PACKAGE_TO_SCAN + nameClassPlugins.get(i), true, childClassloader);
                 plugins.add(clazz);
             }
         } catch (ClassNotFoundException | MalformedURLException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            e.printStackTrace();
         }
         return plugins;
+    }
+
+    public static List<String> takeClassnameFromJar(List<Path> pathList) {
+        List<String> result = new ArrayList<>();
+
+        try {
+            for (Path pathPlugin : pathList) {
+                JarFile jarFile = new JarFile(String.valueOf(pathPlugin));
+                Enumeration<JarEntry> enumeration = jarFile.entries();
+                while (enumeration.hasMoreElements()) {
+                    String file = enumeration.nextElement().getName().replaceAll("/", "\\.");
+                    if (file.endsWith(".class") && file.startsWith(PACKAGE_TO_SCAN)) {
+                        String[] array = file.split("\\.");
+                        String className = array[array.length - 2];
+                        result.add(className);
+                    }
+                }
+            }
+        } catch(IOException e){
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            e.printStackTrace();
+        }
+        return result;
     }
 }

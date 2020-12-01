@@ -12,7 +12,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class PluginEngine {
 
-    private static final Logger logger = getLogger(PluginLoader.class);
+    private static final Logger LOGGER = getLogger(PluginLoader.class);
 
     @Nonnull
     public  <T extends PluginInterface> String applyPlugin(@Nonnull Class<T> cls, @Nonnull String text) {
@@ -23,7 +23,8 @@ public class PluginEngine {
             Method method = cls.getDeclaredMethod("apply", String.class);
             result = (String) method.invoke(instance, text);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            e.printStackTrace();
         }
         return result;
     }

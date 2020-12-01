@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class WikipediaClient {
-    private static final Logger logger = getLogger(WikipediaClient.class);
+    private static final Logger LOGGER = getLogger(WikipediaClient.class);
     public static final String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w/api.php";
 
     @Nonnull
@@ -47,12 +47,11 @@ public class WikipediaClient {
                 String json = reader.readLine();
                 JSONArray jsonArray = JsonPath.parse(json).read( "$.query.pages.*.extract");
                 text = jsonArray.get(0).toString();
-//                text = text.replaceAll("\\\\n", "\n").toLowerCase();
                 text = text.replaceAll("\\\\n", "\n");
             }
         } catch (IOException ex) {
-            logger.error(ex.getMessage());
-            throw new RuntimeException(ex);
+            LOGGER.error(ex.getMessage());
+            ex.printStackTrace();
         }
         return text;
     }

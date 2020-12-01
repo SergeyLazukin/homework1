@@ -13,7 +13,7 @@ import static java.util.Arrays.stream;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class FileEngine {
-    private static final Logger logger = getLogger(FileEngine.class);
+    private static final Logger LOGGER = getLogger(FileEngine.class);
     private static final String RESULT_FILE_PATTERN = "results-%s.txt";
     private static final String RESULT_DIR = "results";
     private static final String RESULT_EXT = "txt";
@@ -24,7 +24,8 @@ public class FileEngine {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)))) {
             writer.write(text);
         } catch (IOException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            e.printStackTrace();
         }
         return true;
     }
@@ -32,6 +33,7 @@ public class FileEngine {
     public void cleanResultDir() {
         final String currentDir = System.getProperty("user.dir");
         final File resultDir = new File(currentDir + "/" + RESULT_DIR);
+        resultDir.mkdir();
         stream(resultDir.list((dir, name) -> name.endsWith(RESULT_EXT)))
                 .forEach(fileName -> new File(resultDir + "/" + fileName).delete());
     }
