@@ -20,7 +20,6 @@ public class FileEngine {
 
     public boolean writeToFile(@Nonnull String text, @Nonnull String pluginName) {
         // TODO: NotImplemented
-//        String path = String.format(System.getProperty("user.dir") + "\\" + RESULT_DIR + "\\" + RESULT_FILE_PATTERN, pluginName);
         String path = String.format(System.getProperty("user.dir") + "/" + RESULT_DIR + "/" + RESULT_FILE_PATTERN, pluginName);
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)))) {
             writer.write(text);
